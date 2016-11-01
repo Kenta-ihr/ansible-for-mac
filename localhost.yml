@@ -31,9 +31,9 @@
       - { name: virtualbox }
       - { name: vagrant }
       - { name: karabiner }
-      - { name: sublime-text3 }
+      - { name: sublime-text }
       - { name: vagrant-manager }
-      - { name: dockertoolbox }
+      - { name: docker-toolbox }
       - { name: phpstorm }
       - { name: appcleaner }
       - { name: sourcetree }
