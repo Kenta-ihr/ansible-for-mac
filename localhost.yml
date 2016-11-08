@@ -20,7 +20,7 @@
       - { name: libxml2 }
       - { name: glib }
       - { name: sha2 }
-
+      - { name: vim }
     homebrew_cask_packages:
       - { name: iterm2 }
       - { name: firefox }
@@ -80,11 +80,8 @@
     - name: .zshrc コピー
       file: src=./.zshrc dest=~/.zshrc
 
-    - name: Change login shell to /usr/local/bin/zsh
-      become: yes
-      become_method: sudo
-      user:
-        shell: /usr/local/bin/zsh
-        state: present
+    # vim
+    - name: .vimrc のコピー
+      file: src=./vimrc dest=./.vimrc
 
   handlers:
