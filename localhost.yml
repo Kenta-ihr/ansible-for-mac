@@ -38,6 +38,7 @@
       - { name: gibo }
       - { name: pwgen }
       - { name: python }
+      - { name: vim }
 
     homebrew_cask_packages:
       - { name: iterm2 }
@@ -109,5 +110,9 @@
 
     - name: /bin/zsh にシェルを切り替え
       command: chsh -s /bin/zsh
+
+    # vim
+    - name: .vimrc のコピー
+      file: src=./vimrc dest=./.vimrc
 
   handlers:
