@@ -1,7 +1,8 @@
+PROMPT='%m %~ $ '
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=100000
+SAVEHIST=100000
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
 zstyle :compinstall filename '/Users/ihara-kenta/.zshrc'
@@ -21,6 +22,15 @@ setopt correct
 # Enable displaying with colors  
 export LSCOLORS=cxfxcxdxbxegedabagacad
 alias ls='ls -GF'
+alias ll='ls -la'
+alias less='less -N'
+alias -g L='| less'
+
+
+#Git alias
+alias gs='git status'
+alias gl='git log'
+alias gb='git branch'
 
 ######################
 # show current branch
@@ -47,10 +57,50 @@ vcs_info_wrapper() {
 }
 RPROMPT=$'$(vcs_info_wrapper)'
 
-# Enable to use both of phpenv and rbenv
-export PHPENV_ROOT=$HOME/.phpenv
-export PATH="$PATH:$PHPENV_ROOT/bin"
-eval "$(rbenv init -)"
-eval "$(phpenv init -)"
+## cocot wrapper
+_ssh_list(){
+  OLDIFS=$IFS
+  IFS=$'\n'
+  OUT=""
+  for ITEM in `grep "Host " ~/.ssh/config | sed -e "s/ \+/ /g" |cut -f2 -d" "`
+  do
+    OUT="${ITEM} ${OUT}"
+  done
+  IFS=$OLDIFS
+  echo ${OUT}
+}
 
-# End of lines
+_ssh_comp() {
+  local cur
+  cur=${COMP_WORDS[COMP_CWORD]}
+  if (( $COMP_CWORD <= 1 )); then
+    COMPREPLY=($( compgen -W "`_ssh_list`" -- $cur ))
+  else
+    COMPREPLY=()
+  fi
+}
+
+alias cssh="cocot -t UTF-8 -p EUC-JP ssh"
+compdef _ssh_comp cssh
+## cocot wrapper
+
+export PATH="/usr/local/sbin:$PATH"
+
+# peco history
+function peco-history-selection() {
+    BUFFER=`history -n 1 | tail -r  | awk '!a[$0]++' | peco`
+    CURSOR=$#BUFFER
+    zle reset-prompt
+}
+
+zle -N peco-history-selection
+bindkey '^R' peco-history-selection
+
+# peco tree
+function peco-tree-vim(){
+  local SELECTED_FILE=$(tree -L 2 --charset=o -f | peco | tr -d '\||`|-' | xargs echo)
+  BUFFER="cd $SELECTED_FILE"
+  zle accept-line
+}
+zle -N peco-tree-vim
+bindkey "^t" peco-tree-vim
