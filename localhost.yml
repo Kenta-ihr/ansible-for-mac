@@ -20,6 +20,24 @@
       - { name: libxml2 }
       - { name: glib }
       - { name: sha2 }
+      - { name: mysql }
+      - { name: autoconf }
+      - { name: nkf }
+      - { name: selenium -server-standalone }
+      - { name: chromedriver }
+      - { name: sqlite }
+      - { name: cocot }
+      - { name: imagemagick }
+      - { name: tig }
+      - { name: composer }
+      - { name: cvs }
+      - { name: libevent }
+      - { name: peco }
+      - { name: geckodriver }
+      - { name: libyaml }
+      - { name: gibo }
+      - { name: pwgen }
+      - { name: python }
 
     homebrew_cask_packages:
       - { name: iterm2 }
@@ -37,6 +55,15 @@
       - { name: phpstorm }
       - { name: appcleaner }
       - { name: sourcetree }
+      - { name: macs-fan-control }
+      - { name: chatwork }
+      - { name: mysqlworkbench }
+      - { name: clipy }
+      - { name: java }
+      - { name: skype }
+      - { name: visual-studio-code }
+      - { name: vagrant }
+
   tasks:
     - name: homebrew の tap リポジトリを追加
       homebrew_tap: tap={{ item }} state=present
@@ -80,11 +107,7 @@
     - name: .zshrc コピー
       file: src=./.zshrc dest=~/.zshrc
 
-    - name: Change login shell to /usr/local/bin/zsh
-      become: yes
-      become_method: sudo
-      user:
-        shell: /usr/local/bin/zsh
-        state: present
+    - name: /bin/zsh にシェルを切り替え
+      command: chsh -s /bin/zsh
 
   handlers:
