@@ -68,51 +68,29 @@
   tasks:
     - name: homebrew の tap リポジトリを追加
       homebrew_tap: tap={{ item }} state=present
-      with_items: homebrew_taps
+      with_items: 
+        - '{{ homebrew_taps }}'
 
     - name: homebrew をアップデート
-      homebrew: update_homebrew=yes
+      homebrew: 
+        update_homebrew: yes
 
-    # brew
     - name: brew パッケージをインストール
-      homebrew: >
-        name={{ item.name }}
-        state={{ item.state | default('latest') }}
-        install_options={{
+      homebrew:
+        name: '{{ item.name }}'
+        state: "{{ item.state | default('latest') }}"
+        install_options: "{{
           item.install_options | default() | join(',')
           if item.install_options is not string
-          else item.install_options
-        }}
-      with_items: homebrew_packages
-      register: brew_result
-    - name: brew パッケージの情報保存先ディレクトリを作成
-      file: path=brew_info state=directory
-    - name: brew パッケージの情報を保存
-      shell: brew info {{ item }} > brew_info/{{ item }}
-      with_items: brew_result.results | selectattr('changed') | map(attribute='item') | map(attribute='name') | list
+          else item.install_options}}"
+      with_items: "{{homebrew_packages}}"
 
-    # cask
     - name: cask パッケージをインストール
-      homebrew_cask: name={{ item.name }} state={{ item.state|default('installed') }}
+      homebrew_cask: 
+        name: '{{ item.name }}'
+        state: "{{ item.state|default('installed')}}"
       environment:
         HOMEBREW_CASK_OPTS: --appdir=/Applications
-      with_items: homebrew_cask_packages
-      register: cask_result
-    - name: cask パッケージの情報保存先ディレクトリを作成
-      file: path=cask_info state=directory
-    - name: cask パッケージの情報を保存
-      shell: brew cask info {{ item }} > cask_info/{{ item }}
-      with_items: cask_result.results | selectattr('changed') | map(attribute='item') | map(attribute='name') | list
+      with_items: 
+        - "{{homebrew_cask_packages}}"
 
-    # zsh
-    - name: .zshrc コピー
-      file: src=./.zshrc dest=~/.zshrc
-
-    - name: /bin/zsh にシェルを切り替え
-      command: chsh -s /bin/zsh
-
-    # vim
-    - name: .vimrc のコピー
-      file: src=./vimrc dest=./.vimrc
-
-  handlers:
